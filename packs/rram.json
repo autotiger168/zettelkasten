@@ -1,0 +1,239 @@
+{
+ "app": "zettelkasten-pack",
+ "v": 1,
+ "id": "rram",
+ "title": "RRAM",
+ "cards": [
+  {
+   "id": "pk-rram-10",
+   "num": "10",
+   "type": "index",
+   "front": "RRAM 索引",
+   "back": "從切換物理、陣列架構到可靠度與嵌入式應用。\n\n**基本原理**\n- [[11]] RRAM 的基本結構與操作\n- [[12]] VCM：氧空缺導電絲\n- [[12a]] ECM／CBRAM：金屬離子導電絲\n\n**陣列架構**\n- [[13]] 1T1R、1S1R 與交叉陣列\n\n**可靠度**\n- [[14]] 三大可靠度課題\n\n**應用**\n- [[15]] 嵌入式 RRAM（eRRAM）整合\n- [[16]] 記憶體內運算",
+   "tags": [
+    "RRAM",
+    "索引"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-11",
+   "num": "11",
+   "type": "permanent",
+   "front": "RRAM 的基本結構與操作是什麼？",
+   "back": "RRAM 是**金屬／絕緣層／金屬（MIM）**結構，靠絕緣層中導電絲（conductive filament）的形成與斷開，在兩種電阻態之間切換：\n\n- **Set**：高阻態 HRS → 低阻態 LRS，導電絲接通\n- **Reset**：LRS → HRS，導電絲在某處斷開，留下一段間隙（gap）\n- **Read**：施加小電壓讀電流，不改變狀態\n\n全新元件通常要先做一次 [[11a]]。依切換極性可分為 [[11b]]。",
+   "tags": [
+    "RRAM",
+    "基礎"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-11a",
+   "num": "11a",
+   "type": "permanent",
+   "front": "Forming 是什麼？為什麼需要它？",
+   "back": "剛製作完成的絕緣層缺陷很少，處於很高的初始電阻。**Forming** 是第一次施加較高電壓，在氧化層中造成受控的軟崩潰，產生第一條導電絲。\n\n- Forming 電壓通常明顯高於之後的 set 電壓\n- 必須搭配**限流（compliance current）**，否則會變成永久的硬崩潰\n- 高 forming 電壓會增加周邊電路（高壓元件、[[51a]] 電荷泵）的負擔\n\n降低或免除 forming 的常見方向：減薄氧化層、摻雜、在製程中預先引入氧空缺（例如搭配吸氧的 cap 層，見 [[12]]）。",
+   "tags": [
+    "RRAM",
+    "操作"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-11b",
+   "num": "11b",
+   "type": "permanent",
+   "front": "單極（unipolar）與雙極（bipolar）切換差在哪？",
+   "back": "| | 單極 | 雙極 |\n|---|---|---|\n| Set／Reset 極性 | 同極性，靠電壓大小區分 | 相反極性 |\n| Reset 機制 | 以焦耳熱為主，熔斷導電絲 | 電場驅動離子遷移 |\n| 代表材料 | NiO 等 | HfOx、TaOx（[[12]]）、CBRAM（[[12a]]） |\n\n目前產品化的 eRRAM 以**雙極**為主：操作較可控、reset 電流較小、耐久度較好。代價是寫入電路要能雙向驅動，見 [[53]]。",
+   "tags": [
+    "RRAM",
+    "操作"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-12",
+   "num": "12",
+   "type": "permanent",
+   "front": "VCM 型 RRAM 的切換機制是什麼？",
+   "back": "VCM（Valence Change Memory）以**氧空缺**構成導電絲，常見於 HfOx、TaOx 等過渡金屬氧化物。\n\n- 一側電極常用 Ti、Ta 等易氧化金屬作為**氧交換層（oxygen exchange layer）**：吸走氧化層中的氧，留下氧空缺\n- **Set**：電場推動帶正電的氧空缺聚集，連成導電通道\n- **Reset**：反向電場讓氧離子回填，導電絲在靠近一側電極處斷開\n\n導電絲只有奈米級粗細，位置與形狀具隨機性，這是 [[14a]] 變異的根源。限流大小決定導電絲粗細，見 [[12b]]。",
+   "tags": [
+    "RRAM",
+    "物理",
+    "VCM"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-12a",
+   "num": "12a",
+   "type": "permanent",
+   "front": "ECM／CBRAM 和 VCM 有什麼不同？",
+   "back": "ECM（Electrochemical Metallization），又稱 CBRAM，導電絲由**金屬原子**構成，而不是氧空缺。\n\n- **活性電極**：Ag 或 Cu，在電場下氧化成離子，穿過固態電解質（如 GeS、SiO₂、Al₂O₃）\n- **惰性電極**：Pt、W 等，離子在此還原、長出金屬導電絲\n- Reset 時金屬導電絲被反向電場溶解\n\n特點：切換電壓低、開關比大；但金屬原子在高溫下容易擴散，**資料保存**較具挑戰，見 [[14b]]。",
+   "tags": [
+    "RRAM",
+    "物理",
+    "CBRAM"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-12b",
+   "num": "12b",
+   "type": "permanent",
+   "front": "限流（compliance current）如何決定 LRS 的電阻？",
+   "back": "Set 時由選擇電晶體或外部電路限制電流上限 I_C：\n\n- I_C 越大 → 導電絲越粗 → **LRS 電阻越低**\n- 經驗上 R_LRS 大致與 I_C 成反比，而 reset 所需電流也隨 I_C 增加\n\n這提供一個設計旋鈕：\n- 低 I_C：省功耗，但導電絲細、不穩定，保存與變異較差\n- 高 I_C：狀態穩，但寫入電流大、存取電晶體要更大\n\n多階儲存（MLC）也常利用不同 I_C 得到多個電阻階層，見 [[16]]。",
+   "tags": [
+    "RRAM",
+    "操作",
+    "設計"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-13",
+   "num": "13",
+   "type": "permanent",
+   "front": "1T1R、1S1R 與交叉陣列各有什麼取捨？",
+   "back": "- **1T1R**：每個 RRAM 串一顆電晶體。電晶體負責選擇與限流，干擾最小、良率最好，是 **eRRAM 主流**；代價是單元面積由電晶體決定\n- **1S1R**：串一個兩端選擇器（selector），可堆疊成 3D 交叉陣列，密度高\n- **純交叉陣列（1R）**：密度最高，但有嚴重的 [[13a]] 問題\n\n1T1R 的寫入偏壓方式見 [[53a]]。",
+   "tags": [
+    "RRAM",
+    "陣列"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-13a",
+   "num": "13a",
+   "type": "permanent",
+   "front": "交叉陣列的漏電路徑（sneak path）是什麼？怎麼解決？",
+   "back": "在純電阻交叉陣列中讀取某一格時，電流也會經由周圍處於 LRS 的單元繞路流過，讓讀到的電流失真，陣列越大越嚴重。\n\n對策：\n- **選擇器**：需要高度非線性的 I-V，小偏壓幾乎不導通。例如 OTS（Ovonic Threshold Switch）\n- **偏壓方式**：V/2、V/3 偏壓讓未選單元只承受部分電壓\n- **自整流（self-rectifying）**元件\n\n選擇器還必須能承受寫入電流、耐久度要跟上記憶元件，這是 3D RRAM 的主要難點。",
+   "tags": [
+    "RRAM",
+    "陣列"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-14",
+   "num": "14",
+   "type": "permanent",
+   "front": "RRAM 的三大可靠度課題是什麼？",
+   "back": "1. **耐久度（endurance）**：反覆切換後開關窗口縮小，或卡在某一態（stuck-at）\n2. **資料保存（retention）**：高溫下電阻漂移，見 [[14b]]\n3. **變異（variability）**：元件間（device-to-device）與每次切換間（cycle-to-cycle）的電阻分布很寬，見 [[14a]]\n\n產品上通常用 [[14c]] 收緊分布，再搭配 [[55]] 的 ECC。車用規格要求見 [[21a]]。",
+   "tags": [
+    "RRAM",
+    "可靠度"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-14a",
+   "num": "14a",
+   "type": "permanent",
+   "front": "為什麼 RRAM 的 HRS 變異比 LRS 大？",
+   "back": "- **LRS** 的電流流經已接通的導電絲，電阻主要由導電絲粗細決定，相對穩定\n- **HRS** 的電流要**穿隧或跳躍**過 reset 後留下的間隙，電流對間隙長度呈**指數**關係；每次 reset 間隙長度略有不同，電阻就差很多\n\n此外，間隙附近個別缺陷的捕捉／釋放會造成**隨機電報雜訊（RTN）**，讓讀值上下跳動。\n\n設計上 HRS 尾端決定讀取窗口，參考電流要放在 LRS 上緣與 HRS 下緣之間，見 [[52]]。",
+   "tags": [
+    "RRAM",
+    "可靠度",
+    "變異"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-14b",
+   "num": "14b",
+   "type": "permanent",
+   "front": "RRAM 資料保存的失效機制是什麼？",
+   "back": "導電絲在高溫下不是靜止的：\n\n- **LRS 失效**：氧空缺（或 CBRAM 的金屬原子）向外擴散，導電絲變細甚至斷開 → 電阻上升\n- **HRS 失效**：缺陷移動讓間隙縮短 → 電阻下降\n\n評估方式：在多個高溫做 bake，量測失效時間，用 Arrhenius 外推到使用溫度（方法見 [[22]]）。\n\n實務上真正決定規格的是分布的**尾端位元（tail bits）**，而不是平均值；細導電絲（低 I_C，[[12b]]）的尾端通常最差。",
+   "tags": [
+    "RRAM",
+    "可靠度",
+    "保存"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-14c",
+   "num": "14c",
+   "type": "permanent",
+   "front": "RRAM 為什麼常用寫入驗證（write-verify）？",
+   "back": "單次寫入的電阻分布太寬（[[14a]]）。寫入驗證的流程：\n\n1. 施加一個寫入脈衝\n2. 讀回並與目標門檻比較\n3. 未達標就再施加脈衝，電壓或脈寬逐步增加（ISPP 概念）\n4. 達標或到達次數上限即停止\n\n好處：分布收緊、讀取窗口變大、減少過度寫入對元件的傷害。\n代價：寫入時間變長且不固定，需要狀態機與較複雜的寫入電路，見 [[53]]。",
+   "tags": [
+    "RRAM",
+    "可靠度",
+    "設計"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-15",
+   "num": "15",
+   "type": "permanent",
+   "front": "嵌入式 RRAM（eRRAM）如何整合進邏輯製程？",
+   "back": "RRAM 元件做在**後段金屬層之間（BEOL）**：\n\n- 只多幾道光罩，對前段電晶體幾乎沒有影響\n- 製程溫度低，與先進邏輯的熱預算相容\n- 材料（HfOx、TaOx、Ti、TiN）多為晶圓廠熟悉的材料\n\n因此在 eFlash 難以微縮到 28nm 以下時（見 [[25]]），RRAM 成為車用與 IoT MCU 的替代選項。各大晶圓廠已在 40、28、22nm 等節點提供 eRRAM。",
+   "tags": [
+    "RRAM",
+    "整合",
+    "eNVM"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-16",
+   "num": "16",
+   "type": "permanent",
+   "front": "RRAM 如何用於記憶體內運算（CIM）？",
+   "back": "把神經網路的權重寫成 RRAM 的電導值 G，排成交叉陣列：\n\n- 在每一列施加輸入電壓 V（代表輸入值）\n- 依歐姆定律，每格電流 I = G·V\n- 依克希荷夫電流定律，每一行自動加總 ΣG·V\n\n一步就完成**矩陣向量乘法**，省去大量資料搬移。\n\n難點：[[14a]] 的變異、電導漂移、ADC 的面積與功耗，以及寫入多階電導的精度（[[12b]]）。",
+   "tags": [
+    "RRAM",
+    "應用",
+    "AI"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-17",
+   "num": "17",
+   "type": "literature",
+   "front": "Waser & Aono（2007）：奈米離子電阻切換記憶體綜述",
+   "back": "**我的理解**：這篇綜述把電阻切換依機制分類，奠定了現在常用的 **VCM、ECM、熱化學（TCM）**三分法，並說明離子遷移與氧化還原如何構成切換。讀 RRAM 文獻時先建立這個分類，就能快速判斷一篇論文在談哪種機制。\n\n對應卡片：[[12]]、[[12a]]、[[11b]]",
+   "tags": [
+    "RRAM",
+    "物理",
+    "論文"
+   ],
+   "source": "R. Waser and M. Aono, \"Nanoionics-based resistive switching memories,\" Nature Materials 6, 833–840 (2007)",
+   "quote": ""
+  },
+  {
+   "id": "pk-rram-f1",
+   "num": "",
+   "type": "fleeting",
+   "front": "RRAM 與 MRAM 在車用 Grade 1 的保存能力怎麼比較？",
+   "back": "閃念：想把 [[14b]] 的 RRAM 保存機制和 MRAM 的熱穩定因子 [[1b2]] 放在同一張表比較，看誰在 125°C、15 年的條件下餘裕較大。待查各家公開資料。",
+   "tags": [
+    "RRAM",
+    "車用",
+    "待整理"
+   ],
+   "source": "",
+   "quote": ""
+  }
+ ]
+}

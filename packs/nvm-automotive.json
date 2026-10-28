@@ -1,0 +1,198 @@
+{
+ "app": "zettelkasten-pack",
+ "v": 1,
+ "id": "nvm-automotive",
+ "title": "車用 NVM",
+ "cards": [
+  {
+   "id": "pk-nvm-automotive-20",
+   "num": "20",
+   "type": "index",
+   "front": "車用 NVM 索引",
+   "back": "車用記憶體的規格、可靠度與功能安全。\n\n**規格與標準**\n- [[21]] AEC-Q100 溫度等級\n- [[23]] 零缺陷與 DPPM 目標\n- [[24a]] ISO 26262 功能安全\n\n**可靠度評估**\n- [[22]] Arrhenius 保存換算\n- [[26]] 三溫測試\n\n**技術選擇**\n- [[25]] 車用 eNVM 的技術路線\n- [[24]] ECC 與安全機制",
+   "tags": [
+    "車用",
+    "索引"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-21",
+   "num": "21",
+   "type": "permanent",
+   "front": "AEC-Q100 的溫度等級（Grade）怎麼分？",
+   "back": "AEC-Q100 是車用 IC 的應力測試認證標準，依工作環境溫度分級：\n\n| Grade | 環境溫度 | 典型位置 |\n|---|---|---|\n| 0 | −40 ～ 150°C | 引擎室內、靠近熱源 |\n| 1 | −40 ～ 125°C | 引擎室多數位置 |\n| 2 | −40 ～ 105°C | 車廂內較熱處 |\n| 3 | −40 ～ 85°C | 車廂內 |\n\nGrade 越高，[[21a]] 的保存與耐久測試條件越嚴，對 NVM 的熱穩定性挑戰越大（MRAM 見 [[26a]]）。",
+   "tags": [
+    "車用",
+    "AEC-Q100",
+    "規格"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-21a",
+   "num": "21a",
+   "type": "permanent",
+   "front": "AEC-Q100 對 NVM 有哪些專門測試？",
+   "back": "AEC-Q100-005 規範**非揮發性記憶體的寫入／抹除耐久度、資料保存與操作壽命**測試（常簡稱 EDR）：\n\n- **耐久度**：依規格次數循環寫抹，之後確認功能與保存\n- **資料保存**：寫入資料後高溫存放，再讀回確認\n- **操作壽命**：在高溫下持續操作\n\n這些測試和一般 IC 的 [[21b]] 一起構成車用 NVM 的認證矩陣。測試溫度與時間的換算邏輯見 [[22]]。",
+   "tags": [
+    "車用",
+    "AEC-Q100",
+    "可靠度"
+   ],
+   "source": "AEC-Q100-005：Non-Volatile Memory Program/Erase Endurance, Data Retention, and Operational Life Test",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-21b",
+   "num": "21b",
+   "type": "permanent",
+   "front": "HTOL、ELFR、HTSL 分別在驗什麼？",
+   "back": "- **HTOL（高溫操作壽命）**：高溫加偏壓長時間操作，模擬整個使用壽命的本質失效（wear-out），典型為 1000 小時\n- **ELFR（早期失效率）**：大量樣品短時間加速，篩出製程缺陷造成的早夭（infant mortality）\n- **HTSL（高溫儲存）**：不加電、純高溫存放，看材料與介面劣化；對 NVM 也是資料保存的考驗\n\n浴缸曲線三段：早夭期（ELFR、[[23a]] 篩選）→ 隨機失效期 → 磨耗期（HTOL）。",
+   "tags": [
+    "車用",
+    "可靠度"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-22",
+   "num": "22",
+   "type": "permanent",
+   "front": "如何用 Arrhenius 模型換算資料保存時間？",
+   "back": "加速因子：\n\n**AF = exp[ (Ea / k) · (1/T_use − 1/T_stress) ]**\n\n- Ea：活化能（eV），由多溫度實驗擬合；k = 8.617×10⁻⁵ eV/K；溫度用絕對溫度\n\n例：Ea = 1.1 eV，使用 85°C、測試 150°C\n- AF ≈ 239\n- 10 年 @85°C ≈ 87,600 小時 → 150°C 下約 **367 小時**\n\n注意：\n- Ea 估錯影響巨大：同條件若 Ea = 0.6 eV，AF 只有約 20\n- 真實車輛溫度不固定，要用 [[22a]] 加總\n\n應用：RRAM [[14b]]、MRAM [[1b2]]。",
+   "tags": [
+    "車用",
+    "可靠度",
+    "保存",
+    "計算"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-22a",
+   "num": "22a",
+   "type": "permanent",
+   "front": "什麼是溫度任務剖面（mission profile）？",
+   "back": "車輛一生中在不同溫度停留的時間比例，例如：\n\n| 溫度 | 時間比例 |\n|---|---|\n| −40°C | 6% |\n| 25°C | 20% |\n| 85°C | 65% |\n| 110°C | 8% |\n| 125°C | 1% |\n\n（數字僅為示意，實際由車廠依安裝位置提供）\n\n把每段時間 t_i 用 [[22]] 換算成測試溫度下的等效時間 t_i / AF_i，再加總，就是需要驗證的總應力時間。高溫時段雖然比例小，常常主導結果。",
+   "tags": [
+    "車用",
+    "可靠度"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-23",
+   "num": "23",
+   "type": "permanent",
+   "front": "車用為什麼追求「零缺陷」？DPPM 是什麼？",
+   "back": "**DPPM**（Defective Parts Per Million）：每百萬顆出貨中的不良顆數。消費性產品可接受數百 DPPM，車用目標通常是**個位數甚至趨近零**。\n\n原因：一輛車有數千顆晶片，單顆不良就可能造成召回與安全風險。\n\n主要手段：\n- 統計篩選：[[23a]]（AEC-Q001）、統計良率分析（AEC-Q002）\n- 設計餘裕與 [[24]] ECC\n- 嚴格的變更管理（PCN）與可追溯性",
+   "tags": [
+    "車用",
+    "品質"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-23a",
+   "num": "23a",
+   "type": "permanent",
+   "front": "PAT（Part Average Testing）為什麼能篩掉潛在缺陷？",
+   "back": "傳統測試只看是否落在規格內。PAT 的想法是：**參數明顯偏離同批多數晶片的晶片，即使還在規格內，也較可能藏有缺陷**。\n\n- 依每片晶圓或每批的實際分布，設定動態上下限（例如平均值 ± 6σ，或更穩健的中位數方法）\n- 落在限外的「離群值」即使通過規格也剔除\n\nAEC-Q001 是 PAT 的指引。對 NVM 而言，讀取電流、寫入時間、[[26]] 測得的餘裕都可以當 PAT 參數。",
+   "tags": [
+    "車用",
+    "品質",
+    "測試"
+   ],
+   "source": "AEC-Q001：Guidelines for Part Average Testing",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-24",
+   "num": "24",
+   "type": "permanent",
+   "front": "車用 NVM 常見的 ECC 與安全機制有哪些？",
+   "back": "- **ECC**：SECDED（單錯更正、雙錯偵測）最普遍；可靠度要求高時用 DEC（雙錯更正，如 BCH）。設計取捨見 [[55]]\n- **寫入後驗證**與讀取重試\n- **Scrubbing**：背景定期讀出、更正、寫回，避免錯誤累積成無法更正\n- **CRC／簽章**：保護程式碼完整性\n- **BIST**：開機或執行中自我測試，見 [[56]]\n- **位址錯誤偵測**：避免讀到錯的位址卻 ECC 正確\n\n這些機制的覆蓋率直接進入 [[24a]] 的安全指標計算。",
+   "tags": [
+    "車用",
+    "ECC",
+    "功能安全"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-24a",
+   "num": "24a",
+   "type": "permanent",
+   "front": "ISO 26262 對記憶體有什麼要求？",
+   "back": "ISO 26262 是道路車輛的功能安全標準，依風險分成 **ASIL A～D**（D 最嚴）。\n\n硬體層面的關鍵指標：\n| 指標 | ASIL B | ASIL C | ASIL D |\n|---|---|---|---|\n| SPFM（單點故障指標） | ≥ 90% | ≥ 97% | ≥ 99% |\n| LFM（潛伏故障指標） | ≥ 60% | ≥ 80% | ≥ 90% |\n\n記憶體的故障模式（位元翻轉、位址解碼錯誤、周邊電路失效）需要被安全機制（[[24]]）偵測或更正，提供 FMEDA 所需的診斷覆蓋率與 FIT 數據。",
+   "tags": [
+    "車用",
+    "功能安全"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-25",
+   "num": "25",
+   "type": "permanent",
+   "front": "車用 eNVM 的技術路線怎麼演進？",
+   "back": "- **eFlash** 長期是車用 MCU 主流（例如分離閘 split-gate 結構），可靠度資料最完整\n- 28nm 以下改用 HKMG 與 FinFET，浮動閘 eFlash 整合困難、成本高 → 需要新型 eNVM\n- 新型 eNVM 都做在 BEOL，與邏輯相容性較好：\n  - **RRAM**：見 [[15]]\n  - **MRAM**：見 [[2]]\n  - **PCM**（相變記憶體）\n\n業界已有車用 MCU 採用 28nm eRRAM、28nm ePCM 與 16nm eMRAM 的公開案例。選擇時要同時看 [[21]] 溫度等級、[[26a]] 回焊能力與寫入次數需求。",
+   "tags": [
+    "車用",
+    "eNVM",
+    "技術趨勢"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-26",
+   "num": "26",
+   "type": "permanent",
+   "front": "為什麼車用 NVM 要做三溫測試？",
+   "back": "記憶體的讀取窗口會隨溫度改變：\n\n- 電晶體電流、感測放大器 offset、參考電流都隨溫度飄移\n- MRAM 的 TMR 在高溫下降低；RRAM 的 HRS 電流在高溫上升\n\n所以測試要在**低溫（−40°C）、室溫、高溫（125 或 150°C）**都確認讀寫正常，並量測各溫度下的餘裕。最差情況常出現在高溫（窗口最小）或低溫（電晶體 Vt 最高、寫入最難）。\n\n量到的餘裕也可以當 [[23a]] 的篩選參數。感測設計見 [[52]]。",
+   "tags": [
+    "車用",
+    "測試"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-26a",
+   "num": "26a",
+   "type": "permanent",
+   "front": "為什麼 MRAM 在車用高溫下特別具挑戰？",
+   "back": "1. **保存**：熱穩定因子 Δ = E_b/k_BT（[[1b2]]）中，溫度在分母，且異向性本身也隨溫度下降 → 高溫時 Δ 下降得比線性更快\n2. **回焊（solder reflow）**：若晶片出廠前就預先寫入程式碼，要撐過約 260°C 的回焊，對 Δ 要求極高\n3. **讀取窗口**：TMR 隨溫度下降（[[2a]]）\n4. **寫入**：低溫時臨界電流上升，見 [[3a]]\n\n設計對策：提高 Δ（但寫入電流增加）、ECC、出廠後才燒錄程式碼。",
+   "tags": [
+    "車用",
+    "MRAM",
+    "可靠度"
+   ],
+   "source": "",
+   "quote": ""
+  },
+  {
+   "id": "pk-nvm-automotive-f1",
+   "num": "",
+   "type": "fleeting",
+   "front": "整理各大車用 MCU 採用的 eNVM 對照表",
+   "back": "閃念：做一張表，列出主要車用 MCU 系列、製程節點、eNVM 種類（eFlash／RRAM／MRAM／PCM）、Grade 等級。可以放進 [[25]] 當延伸。",
+   "tags": [
+    "車用",
+    "待整理"
+   ],
+   "source": "",
+   "quote": ""
+  }
+ ]
+}

@@ -1,0 +1,39 @@
+{
+ "packs": [
+  {
+   "id": "rram",
+   "title": "RRAM",
+   "desc": "切換機制、陣列架構、可靠度、嵌入式整合與記憶體內運算",
+   "file": "rram.json",
+   "count": 17
+  },
+  {
+   "id": "nvm-automotive",
+   "title": "車用 NVM",
+   "desc": "AEC-Q100、Arrhenius 換算、DPPM、ISO 26262 與車用 eNVM 技術路線",
+   "file": "nvm-automotive.json",
+   "count": 14
+  },
+  {
+   "id": "device-physics",
+   "title": "半導體元件物理",
+   "desc": "能帶、PN 接面、MOS、熱載子、FN 穿隧、BTI 與 TDDB",
+   "file": "device-physics.json",
+   "count": 16
+  },
+  {
+   "id": "semiconductor-package",
+   "title": "半導體封裝",
+   "desc": "打線與覆晶、扇出、2.5D/3D、TSV、熱阻與封裝可靠度",
+   "file": "semiconductor-package.json",
+   "count": 16
+  },
+  {
+   "id": "nvm-ic-design",
+   "title": "NVM IC 設計",
+   "desc": "Macro 架構、電荷泵、感測放大器、寫入驅動、ECC、冗餘與 BIST",
+   "file": "nvm-ic-design.json",
+   "count": 15
+  }
+ ]
+}

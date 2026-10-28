@@ -146,6 +146,10 @@ main{max-width:1280px;margin:0 auto;padding:16px}
 #ac div.on,#ac div:hover{background:var(--bg)}
 #toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:10px;font-size:14px;z-index:70;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw}
 #toast.on{opacity:1}
+.pk-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.pk{display:flex;gap:10px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.pk b{font-size:14px}.pk small{display:block;color:var(--muted);font-size:12.5px;line-height:1.45}
+.pk .st{font-size:12px;color:var(--muted);white-space:nowrap}
 /* ---------- 匯出：圖片與列印 ---------- */
 .lightvars{--bg:#f4f0e6;--paper:#fffdf6;--ink:#2a2824;--muted:#7b7568;--line:#e2dac7;--rule:#dde6ee;--accent:#b4432c;--accent-ink:#fff;--blue:#2f5d7c;
   --t-fleeting:#c8962f;--t-literature:#3f7aa8;--t-permanent:#4f8a52;--t-index:#b4432c;color:var(--ink)}
@@ -389,6 +393,10 @@ main{max-width:1280px;margin:0 auto;padding:16px}
       <div class="row" style="margin-top:10px"><button class="btn" id="p-go">變更密碼</button></div>
       <div class="note">變更後，其他裝置需用新密碼「從 GitHub 載入」。</div>
     </details>
+
+    <h3 style="margin:22px 0 4px;font-size:15px">卡片包</h3>
+    <div class="note" style="margin-top:0">預先寫好的主題卡片，載入後和你的卡片一樣加密保存，可自由修改。重複載入不會產生重複卡片。</div>
+    <div id="pk-list" class="pk-list"></div>
 
     <h3 style="margin:22px 0 4px;font-size:15px">匯出與匯入</h3>
     <div class="row" style="margin-top:8px">
@@ -1020,6 +1028,7 @@ function openSettings(){
   $('#s-owner').value=s.owner;$('#s-repo').value=s.repo;$('#s-path').value=s.path;$('#s-branch').value=s.branch;$('#s-token').value=s.token;
   $('#s-lockmin').value=s.lockMin||30;$('#s-theme').value=LS.get(K_THEME)||'auto';$('#s-msg').textContent='';
   $('#m-set').classList.remove('hidden');
+  loadPackList();
 }
 function readSetForm(){return{...S.settings,owner:$('#s-owner').value.trim(),repo:$('#s-repo').value.trim(),path:$('#s-path').value.trim()||'vault.json',branch:$('#s-branch').value.trim()||'main',token:$('#s-token').value.trim(),lockMin:Math.max(1,+$('#s-lockmin').value||30)}}
 async function testConn(){
@@ -1075,10 +1084,8 @@ async function importFile(file){
       const j=JSON.parse(text);
       if(j.app==='zettelkasten'&&j.data){const v=await decryptObj(await keyForBlob(j),j).catch(()=>{throw new Error('備份檔的密碼和目前不同')});S.vault=mergeVaults(S.vault,v);await commit();return toast(`已合併加密備份（共 ${cards().length} 張）`)}
       const arr=Array.isArray(j)?j:j.cards;if(!Array.isArray(arr))throw new Error('格式不符');
-      const exist=new Set(cards().map(c=>c.id));
-      incoming=arr.map(c=>newCard({...c,id:c.id&&!exist.has(c.id)?c.id:uid(),tags:Array.isArray(c.tags)?c.tags:[],updated:Date.now()}));
-      const used=new Set(cards().map(c=>c.num));let n=parseInt(nextTopNum());
-      incoming.forEach(c=>{if(c.num&&used.has(c.num))c.num=String(n++);used.add(c.num)});
+      const r=mergeCards(arr);await commit();
+      return toast(`已匯入 ${r.added} 張卡片${r.skipped?`，略過 ${r.skipped} 張已存在的卡`:''}${r.renum?`；有 ${r.renum} 組編號重複，已改用新編號並更新連結`:''}`,3500);
     }
   }catch(e){return toast('匯入失敗：'+e.message,3500)}
   cards().push(...incoming);await commit();toast(`已匯入 ${incoming.length} 張卡片`);
@@ -1247,6 +1254,60 @@ $('#x-go').onclick=doExport;
 $('#x-bk').onclick=()=>{closeModals();backupPDF()};
 $('#x-scope').onchange=updExportCount;
 $$('input[name=x-lay]').forEach(r=>r.onchange=updExportCount);
+
+/* ---------- 合併外部卡片（JSON 匯入與卡片包共用） ---------- */
+function mergeCards(arr){
+  const exist=new Set(cards().map(c=>c.id));
+  const src=arr.filter(c=>c&&String(c.front||'').trim()&&!(c.id&&exist.has(c.id)));
+  const skipped=arr.length-src.length;
+  const low=n=>String(n||'').toLowerCase().replace(/\s+/g,'');
+  const usedNums=new Set(cards().map(c=>low(c.num)).filter(Boolean));
+  const top=n=>numTokens(n)[0]||'';
+  const inTops=[...new Set(src.map(c=>top(low(c.num))).filter(Boolean))];
+  const collide=new Set(src.filter(c=>c.num&&usedNums.has(low(c.num))).map(c=>top(low(c.num))));
+  const ints=[...usedNums].map(top).concat(inTops).filter(t=>/^\d+$/.test(t)).map(Number);
+  let next=(ints.length?Math.max(...ints):0)+1;const map={};
+  for(const t of inTops)if(collide.has(t))map[t]=String(next++);
+  const remap=n=>{n=low(n);if(!n)return '';const t=top(n);return map[t]?map[t]+n.slice(t.length):n};
+  const oldNums=new Set(src.map(c=>low(c.num)).filter(Boolean));
+  const fix=t=>String(t||'').replace(LINK_RE,(m,ref,lab)=>{const r=low(ref);return oldNums.has(r)&&remap(r)!==r?`[[${remap(r)}${lab!==undefined?'|'+lab:''}]]`:m});
+  const now=Date.now();
+  const out=src.map((c,i)=>newCard({...c,id:c.id||uid(),num:remap(c.num),front:fix(c.front),back:fix(c.back),
+    tags:Array.isArray(c.tags)?c.tags:[],type:TYPES[c.type]?c.type:'permanent',created:now+i,updated:now+i,box:1,due:today(),reviews:0,lapses:0}));
+  cards().push(...out);
+  return {added:out.length,skipped,renum:Object.keys(map).length};
+}
+
+/* ---------- 卡片包 ---------- */
+let PACKS=null;
+async function loadPackList(){
+  const box=$('#pk-list');
+  if(!PACKS){
+    box.innerHTML='<div class="count">讀取卡片包清單…</div>';
+    try{const r=await fetch('packs/index.json',{cache:'no-store'});if(!r.ok)throw 0;PACKS=(await r.json()).packs}
+    catch(e){box.innerHTML='<div class="count">無法讀取卡片包清單（請從 GitHub Pages 網址開啟）</div>';return}
+  }
+  const have=id=>cards().filter(c=>c.id.startsWith(`pk-${id}-`)).length;
+  box.innerHTML=PACKS.map(p=>{const h=have(p.id),full=h>=p.count;
+    return `<div class="pk"><div class="grow"><b>${esc(p.title)}</b> <span class="count">${p.count} 張</span><small>${esc(p.desc)}</small></div>
+      <span class="st">${h?`已有 ${h}/${p.count}`:''}</span>
+      <button class="btn sm ${full?'':'primary'}" data-pk="${esc(p.id)}" ${full?'disabled':''}>${full?'已載入':h?'補齊':'載入'}</button></div>`}).join('')+
+    (PACKS.some(p=>have(p.id)<p.count)?'<div class="row" style="justify-content:flex-end"><button class="btn sm" data-pk="*">全部載入</button></div>':'');
+  box.querySelectorAll('[data-pk]').forEach(b=>b.onclick=()=>installPacks(b.dataset.pk==='*'?PACKS.map(p=>p.id):[b.dataset.pk]));
+}
+async function installPacks(ids){
+  let added=0,skipped=0,renum=0;
+  try{
+    for(const id of ids){
+      const p=PACKS.find(x=>x.id===id);if(!p)continue;
+      const r=await fetch('packs/'+p.file,{cache:'no-store'});if(!r.ok)throw new Error(p.title+' 讀取失敗');
+      const res=mergeCards((await r.json()).cards);added+=res.added;skipped+=res.skipped;renum+=res.renum;
+    }
+  }catch(e){toast('載入失敗：'+e.message,3500)}
+  if(added)await commit();
+  loadPackList();
+  toast(added?`已載入 ${added} 張卡片${renum?`（${renum} 組編號與現有卡片重複，已自動改編號並更新連結）`:''}`:'這些卡片都已經在卡片盒裡了',3500);
+}
 
 function closeModals(){$$('.modal').forEach(m=>m.classList.add('hidden'));acHide()}
 
